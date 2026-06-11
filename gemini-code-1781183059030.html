@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FF Sensibility Optimizer PRO</title>
+    <style>
+        :root {
+            --bg-dark: #0d0e12;
+            --card-bg: #161822;
+            --primary: #ff4a22;
+            --primary-glow: rgba(255, 74, 34, 0.4);
+            --text-main: #ffffff;
+            --text-muted: #8b949e;
+            --accent: #00ff66;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        header h1 {
+            font-size: 1.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-main);
+        }
+
+        header h1 span {
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        header p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Toggles Styling */
+        .panel-section {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 14px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .switch-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .switch-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .switch-label {
+            display: flex;
+            flex-direction: column;
+            padding-right: 10px;
+        }
+
+        .switch-label .title {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .switch-label .desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.2;
+            margin-top: 2px;
+        }
+
+        /* Custom Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #333644;
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+            box-shadow: 0 0 8px var(--primary-glow);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+        /* Action Button */
+        .btn-generate {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s ease;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        .btn-generate:hover {
+            background: #e03d19;
+        }
+
+        /* Results Styling Corrregido */
+        .results-container {
+            display: none;
+            margin-top: 24px;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .sensi-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sensi-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 60px;
+        }
+
+        .sensi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .sensi-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .sensi-name {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--text-main);
+            text-transform: uppercase;
+        }
+
+        .sensi-range {
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .sensi-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--accent);
+            text-align: right;
+            padding-left: 10px;
+        }
+
+        /* Loader */
+        .loader {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>FF Sensi<span>Optimizer</span></h1>
+            <p>Generador de Sensibilidad Calibrada para Android</p>
+        </header>
+
+        <div class="panel-section">
+            <div class="section-title">Parámetros del Sistema</div>
+            
+            <div class="switch-group">
+                <div class="switch-label">
+                    <span class="title">Aimbot Headshot</span>
+                    <span class="desc">Ajuste de DPI dinámico hacia el eje Y</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="aimbot_headshot">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="switch-group">
+                <div class="switch-label">
+                    <span class="title">Aimlock Head Unlock</span>
+                    <span class="desc">Reducción de dispersión por pixel</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="aimlock_unlock">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="switch-group">
+                <div class="switch-label">
+                    <span class="title">Mejora de Sensibilidad</span>
+                    <span class="desc">Optimiza la respuesta táctil interna</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="mejora_sensi">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <button class="btn-generate" onclick="calcularSensibilidad()">Generar Sensibilidad</button>
+
+        <div class="loader" id="loader">
+            <div class="spinner"></div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px;">Calculando intervalos óptimos...</p>
+        </div>
+
+        <div class="results-container" id="results">
+            <div class="panel-section" style="margin-bottom: 0;">
+                <div class="section-title" style="color: var(--accent);">Valores Calibrados</div>
+                <div class="sensi-grid">
+                    
+                    <div class="sensi-card">
+                        <div class="sensi-info">
+                            <div class="sensi-name">General</div>
+                            <div class="sensi-range">Rango: 140 – 175</div>
+                        </div>
+                        <div class="sensi-value" id="val-general">--</div>
+                    </div>
+
+                    <div class="sensi-card">
+                        <div class="sensi-info">
+                            <div class="sensi-name">Mira Punto Rojo</div>
+                            <div class="sensi-range">Rango: 150 – 185</div>
+                        </div>
+                        <div class="sensi-value" id="val-reddot">--</div>
+                    </div>
+
+                    <div class="sensi-card">
+                        <div class="sensi-info">
+                            <div class="sensi-name">Mira x2</div>
+                            <div class="sensi-range">Rango: 180 – 190</div>
+                        </div>
+                        <div class="sensi-value" id="val-x2">--</div>
+                    </div>
+
+                    <div class="sensi-card">
+                        <div class="sensi-info">
+                            <div class="sensi-name">Mira x4</div>
+                            <div class="sensi-range">Rango: 160 – 194</div>
+                        </div>
+                        <div class="sensi-value" id="val-x4">--</div>
+                    </div>
+
+                    <div class="sensi-card">
+                        <div class="sensi-info">
+                            <div class="sensi-name">Mira Francotirador</div>
+                            <div class="sensi-range">Rango: 70 – 130</div>
+                        </div>
+                        <div class="sensi-value" id="val-awm">--</div>
+                    </div>
+
+                    <div class="sensi-card">
+                        <div class="sensi-info">
+                            <div class="sensi-name">Cámara / Vista Libre</div>
+                            <div class="sensi-range">Rango: 100 – 122</div>
+                        </div>
+                        <div class="sensi-value" id="val-camara">--</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calcularSensibilidad() {
+            const loader = document.getElementById('loader');
+            const results = document.getElementById('results');
+            
+            const aimbot = document.getElementById('aimbot_headshot').checked;
+            const aimlock = document.getElementById('aimlock_unlock').checked;
+            const mejora = document.getElementById('mejora_sensi').checked;
+
+            results.style.display = 'none';
+            loader.style.display = 'block';
+
+            setTimeout(() => {
+                loader.style.display = 'none';
+                results.style.display = 'block';
+
+                const intervalos = {
+                    general: { min: 140, max: 175 },
+                    reddot:  { min: 150, max: 185 },
+                    x2:      { min: 180, max: 190 },
+                    x4:      { min: 160, max: 194 },
+                    awm:     { min: 70,  max: 130 },
+                    camara:  { min: 100, max: 122 }
+                };
+
+                let factorProgreso = 0.4;
+                
+                if (aimbot) factorProgreso += 0.25;
+                if (mejora) factorProgreso += 0.20;
+                if (aimlock) factorProgreso -= 0.15;
+
+                factorProgreso = Math.max(0, Math.min(1, factorProgreso));
+
+                const procesarRango = (limites) => {
+                    let fluctuacion = (Math.sin(Date.now()) * 3); 
+                    let delta = limites.max - limites.min;
+                    let resultadoBase = limites.min + (delta * factorProgreso) + fluctuacion;
+                    
+                    return Math.max(limites.min, Math.min(limites.max, Math.round(resultadoBase)));
+                };
+
+                document.getElementById('val-general').innerText = procesarRango(intervalos.general);
+                document.getElementById('val-reddot').innerText  = procesarRango(intervalos.reddot);
+                document.getElementById('val-x2').innerText      = procesarRango(intervalos.x2);
+                document.getElementById('val-x4').innerText      = procesarRango(intervalos.x4);
+                document.getElementById('val-awm').innerText     = procesarRango(intervalos.awm);
+                document.getElementById('val-camara').innerText  = procesarRango(intervalos.camara);
+
+            }, 700);
+        }
+    </script>
+</body>
+</html>
